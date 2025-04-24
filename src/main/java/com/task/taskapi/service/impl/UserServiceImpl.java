@@ -2,10 +2,13 @@ package com.task.taskapi.service.impl;
 
 import com.task.taskapi.domain.dtos.RegisterDto;
 import com.task.taskapi.domain.models.Role;
+import com.task.taskapi.domain.models.Token;
 import com.task.taskapi.domain.models.User;
+import com.task.taskapi.repositories.TokenRepository;
 import com.task.taskapi.repositories.UserRepository;
 import com.task.taskapi.service.contrat.RoleService;
 import com.task.taskapi.service.contrat.UserService;
+import com.task.taskapi.utils.JWTTools;
 import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -21,42 +24,90 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final ModelMapper modelMapper;
     private final RoleService roleService;
+    private final JWTTools jwtTools;
+    private final TokenRepository tokenRepository;
 
-    public UserServiceImpl(UserRepository userRepository, ModelMapper modelMapper, RoleService roleService){
+    public UserServiceImpl(UserRepository userRepository, ModelMapper modelMapper, RoleService roleService, JWTTools jwtTools, TokenRepository tokenRepository) {
         this.userRepository = userRepository;
         this.modelMapper = modelMapper;
         this.roleService = roleService;
+        this.jwtTools = jwtTools;
+        this.tokenRepository = tokenRepository;
     }
 
     @Override
     @Transactional(rollbackOn = Exception.class)
-     public void createUser(RegisterDto userDto) {
-        try{
+    public void createUser(RegisterDto userDto) {
+        try {
             User user = modelMapper.map(userDto, User.class);
-            if(userRepository.existsUserByEmail(user.getEmail())){
+            if (userRepository.existsUserByEmail(user.getEmail())) {
                 throw new RuntimeException("User already exists");
             }
 
             user.setRoles(List.of(roleService.findById("USER")));
             userRepository.save(user);
-        }catch (Exception e){
+        } catch (Exception e) {
             throw new RuntimeException(
-                    e.getMessage()!=null ? e.getMessage() : "Error while creating user "
+                    e.getMessage() != null ? e.getMessage() : "Error while creating user "
             );
 
         }
     }
 
     @Override
-    public User findUserByEmail(String email){
-        try{
+    public User findUserByEmail(String email) {
+        try {
             User user = userRepository.findByEmail(email);
-            if(user == null){
+            if (user == null) {
                 throw new RuntimeException("User not found");
             }
             return user;
-        }catch (Exception e){
+        } catch (Exception e) {
             throw new RuntimeException("Error while fetching user: " + e.getMessage());
         }
+    }
+
+    //Method for validation auth user
+    @Override
+    @Transactional(rollbackOn = Exception.class)
+    public Token registerToken(User user) throws Exception {
+        cleanToken(user);
+
+        String tokenString = jwtTools.generateToken(user);
+        Token token = new Token(tokenString, user);
+
+        tokenRepository.save(token);
+        return token;
+    }
+
+    @Override
+    public Boolean isTokenValid(User user, Token token) {
+        try {
+            cleanToken(user);
+            List<Token> tokens = tokenRepository.findByUserAndActive(user, true);
+
+            tokens.stream()
+                    .filter(t -> t.getContent().equals(token))
+                    .findAny()
+                    .orElseThrow(() -> new Exception());
+            return true;
+        } catch (Exception e) {
+            throw new RuntimeException("Error while validating token: " + e.getMessage());
+        }
+    }
+
+
+
+    @Override
+    @Transactional(rollbackOn = Exception.class)
+    public void cleanToken(User user) throws Exception {
+        List<Token> tokens = tokenRepository.findByUserAndActive(user, true);
+
+        tokens.forEach(token ->{
+            if(!jwtTools.verifyToken(token.getContent())){
+                token.setActive(false);
+                tokenRepository.save(token);
+            }
+        });
     }
 }
