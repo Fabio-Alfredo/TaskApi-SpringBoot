@@ -9,6 +9,7 @@ import com.task.taskapi.service.contrat.UserService;
 import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.web.filter.HiddenHttpMethodFilter;
 
 import java.util.List;
 import java.util.Optional;
@@ -32,15 +33,17 @@ public class UserServiceImpl implements UserService {
      public void createUser(RegisterDto userDto) {
         try{
             User user = modelMapper.map(userDto, User.class);
-
-            if(!userRepository.existsUserByEmail(user.getEmail())){
+            if(userRepository.existsUserByEmail(user.getEmail())){
                 throw new RuntimeException("User already exists");
             }
 
             user.setRoles(List.of(roleService.findById("USER")));
             userRepository.save(user);
         }catch (Exception e){
-            throw new RuntimeException("Error while creating user: " + e.getMessage());
+            throw new RuntimeException(
+                    e.getMessage()!=null ? e.getMessage() : "Error while creating user "
+            );
+
         }
     }
 
