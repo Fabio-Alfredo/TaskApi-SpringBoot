@@ -25,7 +25,7 @@ public class AuthController {
 
             return GeneralResponse.getResponse(HttpStatus.CREATED, "User registered successfully");
         }catch (Exception e){
-            return GeneralResponse.getResponse(HttpStatus.BAD_REQUEST, "Error while registering user");
+            return GeneralResponse.getResponse(HttpStatus.BAD_REQUEST, e.getMessage());
         }
     }
 }
