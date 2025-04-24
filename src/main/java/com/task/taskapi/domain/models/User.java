@@ -18,6 +18,8 @@ public class User {
     private String name;
     private String email;
     private String password;
+    @Column(name = "active", insertable = false)
+    private Boolean active;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "user_roles",
