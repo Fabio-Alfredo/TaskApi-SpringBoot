@@ -43,6 +43,7 @@ public class JWTTokenFilter extends OncePerRequestFilter {
             } catch (MalformedJwtException e) {
                 System.out.println("JWT token is malformed");
             }
+
         } else {
             System.out.println("Bearer String not found");
         }
@@ -63,10 +64,11 @@ public class JWTTokenFilter extends OncePerRequestFilter {
                     SecurityContextHolder.getContext().setAuthentication(authToken);
                 }
             }
+            else{
+                System.out.println("User not found");
+            }
         }
         filterChain.doFilter(request, response);
     }
-
-
 
 }
