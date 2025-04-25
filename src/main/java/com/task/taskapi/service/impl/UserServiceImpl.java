@@ -11,6 +11,8 @@ import com.task.taskapi.service.contrat.UserService;
 import com.task.taskapi.utils.JWTTools;
 import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.filter.HiddenHttpMethodFilter;
 
@@ -26,19 +28,23 @@ public class UserServiceImpl implements UserService {
     private final RoleService roleService;
     private final JWTTools jwtTools;
     private final TokenRepository tokenRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public UserServiceImpl(UserRepository userRepository, ModelMapper modelMapper, RoleService roleService, JWTTools jwtTools, TokenRepository tokenRepository) {
+    public UserServiceImpl(UserRepository userRepository, ModelMapper modelMapper, RoleService roleService, JWTTools jwtTools, TokenRepository tokenRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.modelMapper = modelMapper;
         this.roleService = roleService;
         this.jwtTools = jwtTools;
         this.tokenRepository = tokenRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
     @Transactional(rollbackOn = Exception.class)
     public void createUser(RegisterDto userDto) {
         try {
+            userDto.setPassword(passwordEncoder.encode(userDto.getPassword()));
+
             User user = modelMapper.map(userDto, User.class);
             if (userRepository.existsUserByEmail(user.getEmail())) {
                 throw new RuntimeException("User already exists");
@@ -81,7 +87,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Boolean isTokenValid(User user, Token token) {
+    public Boolean isTokenValid(User user, String token) {
         try {
             cleanToken(user);
             List<Token> tokens = tokenRepository.findByUserAndActive(user, true);
@@ -110,4 +116,15 @@ public class UserServiceImpl implements UserService {
             }
         });
     }
+
+    @Override
+    public User findUserAuthenticated() {
+        String email = SecurityContextHolder
+                .getContext()
+                .getAuthentication()
+                .getName();
+
+        return userRepository.findByEmail(email);
+    }
+
 }
