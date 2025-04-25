@@ -1,5 +1,6 @@
 package com.task.taskapi.service.contrat;
 
+import com.task.taskapi.domain.dtos.LoginDto;
 import com.task.taskapi.domain.dtos.RegisterDto;
 import com.task.taskapi.domain.models.Token;
 import com.task.taskapi.domain.models.User;
@@ -7,6 +8,9 @@ import com.task.taskapi.domain.models.User;
 public interface UserService {
     void createUser(RegisterDto userDto);
     User findUserByEmail(String email);
+
+    //Function for login user
+    Token loginUser(LoginDto data) throws Exception;
 
     //Functions for token validations
     Token registerToken(User user) throws Exception;
