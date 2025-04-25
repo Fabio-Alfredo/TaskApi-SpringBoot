@@ -29,23 +29,16 @@ public class AuthController {
     public ResponseEntity<GeneralResponse> registerUser (@RequestBody @Valid RegisterDto userDto){
         try{
             userService.createUser(userDto);
-
             return GeneralResponse.getResponse(HttpStatus.CREATED, "User registered successfully");
         }catch (Exception e){
             return GeneralResponse.getResponse(HttpStatus.BAD_REQUEST, e.getMessage());
         }
     }
 
-    //Cambiar la logica para el servicio
     @PostMapping("/login")
     public  ResponseEntity<GeneralResponse> loginUser (@RequestBody @Valid LoginDto data, BindingResult validations){
         try{
-            User user = userService.findUserByEmail(data.getEmail());
-            if(user == null ){
-                return GeneralResponse.getResponse(HttpStatus.NOT_FOUND, "User not found");
-            }
-
-            Token token = userService.registerToken(user);
+            Token token = userService.loginUser(data);
             return GeneralResponse.getResponse(HttpStatus.OK, "User logged in successfully", new TokenDto(token) );
         }catch (Exception e){
             return GeneralResponse.getResponse(HttpStatus.BAD_REQUEST, e.getMessage());
