@@ -29,7 +29,7 @@ public class JWTTools {
                 .claims(claims)
                 .subject(user.getEmail())
                 .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis()))
+                .expiration(new Date(System.currentTimeMillis()+exp) )
                 .signWith(Keys.hmacShaKeyFor(secret.getBytes()))
                 .compact();
     }
