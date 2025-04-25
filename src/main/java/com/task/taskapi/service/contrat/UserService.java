@@ -10,6 +10,7 @@ public interface UserService {
 
     //Functions for token validations
     Token registerToken(User user) throws Exception;
-    Boolean isTokenValid(User user, Token token) ;
+    Boolean isTokenValid(User user, String token) ;
     void cleanToken(User user) throws Exception;
+    User findUserAuthenticated();
 }
