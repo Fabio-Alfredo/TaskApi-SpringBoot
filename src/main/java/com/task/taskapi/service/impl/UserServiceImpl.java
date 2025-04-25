@@ -1,5 +1,6 @@
 package com.task.taskapi.service.impl;
 
+import com.task.taskapi.domain.dtos.LoginDto;
 import com.task.taskapi.domain.dtos.RegisterDto;
 import com.task.taskapi.domain.models.Role;
 import com.task.taskapi.domain.models.Token;
@@ -59,6 +60,24 @@ public class UserServiceImpl implements UserService {
 
         }
     }
+
+    @Override
+    public Token loginUser(LoginDto data){
+        try{
+            User user = userRepository.findByEmail(data.getEmail());
+            if(user == null || !passwordEncoder.matches(data.getPassword(), user.getPassword())){
+                throw new RuntimeException("Invalid credentials");
+            }
+
+            Token token = registerToken(user);
+
+            return token;
+        }catch (Exception e){
+            throw new RuntimeException("Error while logging in user: " + e.getMessage());
+
+        }
+    }
+
 
     @Override
     public User findUserByEmail(String email) {
