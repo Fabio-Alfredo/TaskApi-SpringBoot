@@ -1,6 +1,8 @@
 package com.task.taskapi.service.impl;
 
 import com.task.taskapi.domain.dtos.task.CreateTaskDto;
+import com.task.taskapi.domain.dtos.task.ResponseTaskDto;
+import com.task.taskapi.domain.dtos.user.ResponseUserDto;
 import com.task.taskapi.domain.models.Task;
 import com.task.taskapi.domain.models.User;
 import com.task.taskapi.repositories.TaskRepository;
@@ -40,17 +42,44 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public List<Task> getAllTasks() {
-        return List.of();
+    public List<ResponseTaskDto> getAllTasks() {
+        try{
+            List<Task> tasks = taskRepository.findAll();
+
+            return tasks.stream()
+                    .map(task -> modelMapper.map(task, ResponseTaskDto.class))
+                    .toList();
+        }catch (Exception e){
+            throw new RuntimeException(
+                    e.getMessage() != null ? e.getMessage() : "Error while getting all tasks"
+            );
+        }
     }
 
     @Override
-    public List<Task> getAllTasksByUser(User user) {
-        return List.of();
+    public List<ResponseTaskDto> getAllTasksByUser(User user) {
+        try{
+           List<ResponseTaskDto> tasks = taskRepository.findAllByUser(user);
+            return tasks;
+        }catch (Exception e){
+            throw new RuntimeException(
+                    e.getMessage() != null ? e.getMessage() : "Error while getting all tasks by user"
+            );
+        }
     }
 
     @Override
-    public Task getTaskById(String id) {
-        return null;
+    public Task getTaskById(UUID id) {
+        try{
+            Task task = taskRepository.findById(id).orElse(null);
+            if(task == null){
+                throw new RuntimeException("Task not found");
+            }
+            return task;
+        }catch (Exception e){
+            throw new RuntimeException(
+                    e.getMessage() != null ? e.getMessage() : "Error while getting task by id"
+            );
+        }
     }
 }
