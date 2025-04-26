@@ -15,8 +15,18 @@ public class Task {
     private UUID id;
     private String title;
     private String description;
-    private String status;
+
+    @Enumerated(EnumType.STRING)
+    private TaskStatus status;
 
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
     private User user;
+
+    //Si el estado es null asigna uno por defecto
+    @PrePersist
+    private void setDefaultStatus(){
+        if(this.status == null){
+            this.status = TaskStatus.PENDING;
+        }
+    }
 }
