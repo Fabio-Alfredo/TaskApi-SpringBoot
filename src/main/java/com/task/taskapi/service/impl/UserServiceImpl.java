@@ -1,8 +1,7 @@
 package com.task.taskapi.service.impl;
 
-import com.task.taskapi.domain.dtos.LoginDto;
-import com.task.taskapi.domain.dtos.RegisterDto;
-import com.task.taskapi.domain.models.Role;
+import com.task.taskapi.domain.dtos.auth.LoginDto;
+import com.task.taskapi.domain.dtos.auth.RegisterDto;
 import com.task.taskapi.domain.models.Token;
 import com.task.taskapi.domain.models.User;
 import com.task.taskapi.repositories.TokenRepository;
@@ -15,11 +14,9 @@ import org.modelmapper.ModelMapper;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.filter.HiddenHttpMethodFilter;
 
 import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.UUID;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -88,6 +85,19 @@ public class UserServiceImpl implements UserService {
             }
             return user;
         } catch (Exception e) {
+            throw new RuntimeException("Error while fetching user: " + e.getMessage());
+        }
+    }
+
+    @Override
+    public User findById(UUID id){
+        try{
+            User user = userRepository.findById(id).orElse(null);
+            if(user == null){
+                throw new RuntimeException("User not found");
+            }
+            return user;
+        }catch (Exception e){
             throw new RuntimeException("Error while fetching user: " + e.getMessage());
         }
     }

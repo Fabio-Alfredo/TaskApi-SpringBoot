@@ -1,4 +1,4 @@
-package com.task.taskapi.domain.dtos;
+package com.task.taskapi.domain.dtos.auth;
 
 import com.task.taskapi.domain.models.Token;
 import lombok.Data;

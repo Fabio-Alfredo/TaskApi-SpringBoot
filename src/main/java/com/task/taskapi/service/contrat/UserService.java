@@ -1,13 +1,16 @@
 package com.task.taskapi.service.contrat;
 
-import com.task.taskapi.domain.dtos.LoginDto;
-import com.task.taskapi.domain.dtos.RegisterDto;
+import com.task.taskapi.domain.dtos.auth.LoginDto;
+import com.task.taskapi.domain.dtos.auth.RegisterDto;
 import com.task.taskapi.domain.models.Token;
 import com.task.taskapi.domain.models.User;
+
+import java.util.UUID;
 
 public interface UserService {
     void createUser(RegisterDto userDto);
     User findUserByEmail(String email);
+    User findById(UUID id);
 
     //Function for login user
     Token loginUser(LoginDto data) throws Exception;
