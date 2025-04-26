@@ -12,6 +12,6 @@ public interface TaskService {
     Task createTask(CreateTaskDto task, User user);
     List<ResponseTaskDto> getAllTasks();
     List<ResponseTaskDto>getAllTasksByUser(User user);
-    Task getTaskById(UUID id);
+    Task getTaskById(UUID id, User user);
 
 }

@@ -69,9 +69,9 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public Task getTaskById(UUID id) {
+    public Task getTaskById(UUID id, User user) {
         try{
-            Task task = taskRepository.findById(id).orElse(null);
+            Task task = taskRepository.findByIdAndUser(id, user);
             if(task == null){
                 throw new RuntimeException("Task not found");
             }
