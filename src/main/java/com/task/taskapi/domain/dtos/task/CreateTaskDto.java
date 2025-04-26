@@ -1,8 +1,10 @@
 package com.task.taskapi.domain.dtos.task;
 
 import jakarta.validation.constraints.NotBlank;
+import lombok.Data;
 
-public class CreateDto {
+@Data
+public class CreateTaskDto {
     @NotBlank(message = "Title is required")
     private String title;
     private String description;
