@@ -2,8 +2,10 @@ package com.task.taskapi.service.impl;
 
 import com.task.taskapi.domain.dtos.task.CreateTaskDto;
 import com.task.taskapi.domain.dtos.task.ResponseTaskDto;
+import com.task.taskapi.domain.dtos.task.UpdateTaskDto;
 import com.task.taskapi.domain.dtos.user.ResponseUserDto;
 import com.task.taskapi.domain.models.Task;
+import com.task.taskapi.domain.models.TaskStatus;
 import com.task.taskapi.domain.models.User;
 import com.task.taskapi.repositories.TaskRepository;
 import com.task.taskapi.service.contrat.TaskService;
@@ -79,6 +81,22 @@ public class TaskServiceImpl implements TaskService {
         }catch (Exception e){
             throw new RuntimeException(
                     e.getMessage() != null ? e.getMessage() : "Error while getting task by id"
+            );
+        }
+    }
+
+    @Override
+    public Task updateStatusTask(UUID id, TaskStatus status, User user) {
+        try{
+            Task task = taskRepository.findByIdAndUser(id, user);
+            if(task == null){
+               throw  new RuntimeException("Task not found");
+            }
+            task.setStatus(status);
+            return taskRepository.save(task);
+        }catch (Exception e){
+            throw  new RuntimeException(
+                    e.getMessage() != null ? e.getMessage() : "Error updating task"
             );
         }
     }
