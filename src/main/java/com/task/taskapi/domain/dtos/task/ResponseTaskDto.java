@@ -2,7 +2,7 @@ package com.task.taskapi.domain.dtos.task;
 
 import com.task.taskapi.domain.dtos.user.ResponseUserDto;
 import com.task.taskapi.domain.models.Task;
-import com.task.taskapi.domain.models.TaskStatus;
+import com.task.taskapi.domain.enums.TaskStatus;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 

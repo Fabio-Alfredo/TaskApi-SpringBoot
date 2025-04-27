@@ -1,5 +1,6 @@
 package com.task.taskapi.domain.models;
 
+import com.task.taskapi.domain.enums.TaskStatus;
 import jakarta.persistence.*;
 import lombok.Data;
 

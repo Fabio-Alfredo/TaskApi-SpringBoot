@@ -1,4 +1,4 @@
-package com.task.taskapi.domain.models;
+package com.task.taskapi.domain.enums;
 
 public enum TaskStatus {
     PENDING,

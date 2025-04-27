@@ -4,7 +4,7 @@ import com.task.taskapi.domain.dtos.task.CreateTaskDto;
 import com.task.taskapi.domain.dtos.task.ResponseTaskDto;
 import com.task.taskapi.domain.dtos.task.UpdateTaskDto;
 import com.task.taskapi.domain.models.Task;
-import com.task.taskapi.domain.models.TaskStatus;
+import com.task.taskapi.domain.enums.TaskStatus;
 import com.task.taskapi.domain.models.User;
 
 import java.util.List;
