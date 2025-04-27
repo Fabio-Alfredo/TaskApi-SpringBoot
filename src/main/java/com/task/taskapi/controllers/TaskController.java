@@ -3,11 +3,15 @@ package com.task.taskapi.controllers;
 import com.task.taskapi.domain.dtos.GeneralResponse;
 import com.task.taskapi.domain.dtos.task.CreateTaskDto;
 import com.task.taskapi.domain.dtos.task.ResponseTaskDto;
+import com.task.taskapi.domain.dtos.task.UpdateStatusTaskDto;
+import com.task.taskapi.domain.dtos.task.UpdateTaskDto;
 import com.task.taskapi.domain.models.Task;
+import com.task.taskapi.domain.models.TaskStatus;
 import com.task.taskapi.domain.models.User;
 import com.task.taskapi.service.contrat.TaskService;
 import com.task.taskapi.service.contrat.UserService;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -72,5 +76,28 @@ public class TaskController {
             return GeneralResponse.getResponse(HttpStatus.BAD_REQUEST, e.getMessage());
         }
     }
+
+    @PatchMapping("/status/{taskId}")
+    public  ResponseEntity<GeneralResponse> updateStatusInTask(@PathVariable UUID taskId, @RequestBody UpdateStatusTaskDto status){
+        try{
+            User user = userService.findUserAuthenticated();
+            Task task = taskService.updateStatusTask(taskId, status.getStatus(),user);
+            return GeneralResponse.getResponse(HttpStatus.OK, "Updated status in task", new ResponseTaskDto(task));
+        }catch (Exception e){
+            return GeneralResponse.getResponse(HttpStatus.BAD_REQUEST, e.getMessage());
+        }
+    }
+
+    @PutMapping("/update/{taskId}")
+    public ResponseEntity<GeneralResponse>updateDataInTask(@PathVariable UUID taskId, @RequestBody UpdateTaskDto taskDto){
+        try{
+            User user = userService.findUserAuthenticated();
+            Task task = taskService.updateDataTask(taskId, taskDto, user);
+            return GeneralResponse.getResponse(HttpStatus.OK, "Update data by task", new ResponseTaskDto(task));
+        }catch (Exception e){
+            return GeneralResponse.getResponse(HttpStatus.BAD_REQUEST, e.getMessage());
+        }
+    }
+
 
 }
