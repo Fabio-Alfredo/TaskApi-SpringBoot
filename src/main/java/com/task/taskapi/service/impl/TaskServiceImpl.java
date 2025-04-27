@@ -100,4 +100,24 @@ public class TaskServiceImpl implements TaskService {
             );
         }
     }
+
+    @Override
+    public Task updateDataTask(UUID id, UpdateTaskDto taskDto, User user) {
+        try{
+            Task task = taskRepository.findByIdAndUser(id, user);
+            if(task == null){
+                throw new RuntimeException("Task not found");
+            }
+            if(!taskDto.getTitle().isEmpty())
+                task.setTitle(taskDto.getTitle());
+            if(!taskDto.getDescription().isEmpty())
+                task.setDescription(taskDto.getDescription());
+
+            return taskRepository.save(task);
+        }catch (Exception e){
+            throw new RuntimeException(
+                    e.getMessage() != null ? e.getMessage() : "Error updating task"
+            );
+        }
+    }
 }
