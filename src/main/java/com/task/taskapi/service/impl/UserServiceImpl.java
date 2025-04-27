@@ -2,6 +2,9 @@ package com.task.taskapi.service.impl;
 
 import com.task.taskapi.domain.dtos.auth.LoginDto;
 import com.task.taskapi.domain.dtos.auth.RegisterDto;
+import com.task.taskapi.domain.dtos.user.AddRoleDto;
+import com.task.taskapi.domain.dtos.user.ResponseUserDto;
+import com.task.taskapi.domain.models.Role;
 import com.task.taskapi.domain.models.Token;
 import com.task.taskapi.domain.models.User;
 import com.task.taskapi.repositories.TokenRepository;
@@ -99,6 +102,33 @@ public class UserServiceImpl implements UserService {
             return user;
         }catch (Exception e){
             throw new RuntimeException("Error while fetching user: " + e.getMessage());
+        }
+    }
+
+    @Override
+    public List<ResponseUserDto> findAllUsers() {
+        try{
+            List<User> users = userRepository.findAll();
+            return users.stream().map(user -> modelMapper.map(user, ResponseUserDto.class)).toList();
+        }catch (Exception e){
+            throw new RuntimeException("Error while fetching users");
+        }
+    }
+
+    @Override
+    public User updateRolesInUser(UUID userId, String newRole) {
+        try{
+            Role role = roleService.findById(newRole);
+            User user = userRepository.findById(userId).orElse(null);
+            if(user == null)
+                throw new RuntimeException("User not found");
+
+            if(!user.getRoles().contains(role))
+                user.getRoles().add(role);
+
+            return userRepository.save(user);
+        }catch (Exception e){
+            throw new RuntimeException("Error update roles by: "+ e.getMessage());
         }
     }
 
