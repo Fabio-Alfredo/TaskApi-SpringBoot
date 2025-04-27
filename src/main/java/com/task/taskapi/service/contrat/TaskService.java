@@ -16,5 +16,6 @@ public interface TaskService {
     List<ResponseTaskDto>getAllTasksByUser(User user);
     Task getTaskById(UUID id, User user);
     Task updateStatusTask(UUID id, TaskStatus status, User user);
+    Task updateDataTask(UUID id, UpdateTaskDto taskDto, User user);
 
 }
