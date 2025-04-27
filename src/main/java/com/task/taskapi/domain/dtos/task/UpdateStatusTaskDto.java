@@ -1,6 +1,6 @@
 package com.task.taskapi.domain.dtos.task;
 
-import com.task.taskapi.domain.models.TaskStatus;
+import com.task.taskapi.domain.enums.TaskStatus;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
