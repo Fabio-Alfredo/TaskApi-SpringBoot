@@ -2,8 +2,8 @@ package com.task.taskapi.service.impl;
 
 import com.task.taskapi.domain.dtos.auth.LoginDto;
 import com.task.taskapi.domain.dtos.auth.RegisterDto;
-import com.task.taskapi.domain.dtos.user.AddRoleDto;
 import com.task.taskapi.domain.dtos.user.ResponseUserDto;
+import com.task.taskapi.domain.enums.UserRoleAction;
 import com.task.taskapi.domain.models.Role;
 import com.task.taskapi.domain.models.Token;
 import com.task.taskapi.domain.models.User;
@@ -19,6 +19,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 @Service
@@ -116,15 +117,21 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User updateRolesInUser(UUID userId, String newRole) {
+    public User updateRolesInUser(UUID userId, String newRole, UserRoleAction action) {
         try{
             Role role = roleService.findById(newRole);
             User user = userRepository.findById(userId).orElse(null);
             if(user == null)
                 throw new RuntimeException("User not found");
 
-            if(!user.getRoles().contains(role))
-                user.getRoles().add(role);
+            if(action.equals(UserRoleAction.ADD_ROLE)){
+                if(!user.getRoles().contains(role))
+                    user.getRoles().add(role);
+            }else if(action.equals(UserRoleAction.REMOVE_ROLE)){
+                user.getRoles().remove(role);
+            }else{
+                throw  new RuntimeException("Invalid action");
+            }
 
             return userRepository.save(user);
         }catch (Exception e){
