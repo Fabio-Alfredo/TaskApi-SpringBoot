@@ -2,8 +2,8 @@ package com.task.taskapi.service.contrat;
 
 import com.task.taskapi.domain.dtos.auth.LoginDto;
 import com.task.taskapi.domain.dtos.auth.RegisterDto;
-import com.task.taskapi.domain.dtos.user.AddRoleDto;
 import com.task.taskapi.domain.dtos.user.ResponseUserDto;
+import com.task.taskapi.domain.enums.UserRoleAction;
 import com.task.taskapi.domain.models.Token;
 import com.task.taskapi.domain.models.User;
 
@@ -15,7 +15,7 @@ public interface UserService {
     User findUserByEmail(String email);
     User findById(UUID id);
     List<ResponseUserDto>findAllUsers();
-    User updateRolesInUser(UUID userId, String newRole);
+    User updateRolesInUser(UUID userId, String newRole, UserRoleAction action);
 
 
     //Function for login user
