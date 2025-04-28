@@ -1,6 +1,7 @@
 package com.task.taskapi.controllers;
 
 import com.task.taskapi.domain.dtos.GeneralResponse;
+import com.task.taskapi.exceptions.HttpError;
 import com.task.taskapi.service.contrat.RoleService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -25,7 +26,10 @@ public class RoleController {
         try{
             var role = roleService.findById(roleId);
             return GeneralResponse.getResponse(HttpStatus.ACCEPTED, "Role fetched successfully", role);
-        }catch (Exception e){
+        }catch (HttpError e){
+            return GeneralResponse.getResponse(e.getHttpStatus(), e.getMessage());
+        }
+        catch (Exception e){
             return GeneralResponse.getResponse(HttpStatus.BAD_REQUEST, "Error while fetching role: " + e.getMessage());
         }
     }
